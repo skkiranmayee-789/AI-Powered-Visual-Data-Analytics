@@ -62,6 +62,47 @@ document.getElementById('login-form')?.addEventListener('submit', async (e) => {
         openDashboard(); // Demo fallback
     }
 });
+// ================= SIGN UP =================
+document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const full_name = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    const confirmPassword = document.getElementById('signup-confirm-password').value;
+
+    if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                full_name,
+                email,
+                password
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert('Account created successfully. Please sign in.');
+            document.getElementById('signup-form').reset();
+            switchTab('login');
+        } else {
+            alert(data.message || 'Unable to create account.');
+        }
+    } catch (err) {
+        console.error('Signup error:', err);
+        alert('Unable to connect to the server.');
+    }
+});
 
 // ================= MODULE 6: DASHBOARD & REPORTING =================
 async function loadDashboardMetrics() {
@@ -406,4 +447,12 @@ function rejectInvestigation() {
     prompt('Enter revision comments for agents:');
     document.getElementById('reviewBadge').className = 'badge badge-critical';
     document.getElementById('reviewBadge').innerText = 'Revision Requested';
+}
+// ================= CLEAR DASHBOARD FILTERS =================
+function clearFilters() {
+    document.getElementById("filterSeverity").value = "All";
+    document.getElementById("filterStatus").value = "All";
+    document.getElementById("filterDepartment").value = "All";
+
+    loadViolationsTable();
 }

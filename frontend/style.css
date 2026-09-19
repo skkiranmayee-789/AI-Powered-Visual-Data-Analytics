@@ -506,3 +506,21 @@ body {
 .mb-20 { margin-bottom: 20px; }
 .mt-16 { margin-top: 16px; }
 .mt-24 { margin-top: 24px; }
+/* ================= CLEAR FILTER BUTTON ================= */
+.clear-filter-btn {
+    padding: 9px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-elevated);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.clear-filter-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-glow);
+}
