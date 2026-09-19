@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vision Desk AI — Enterprise Safety & Intelligence Suite</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- ================= AUTHENTICATION MODAL ================= -->
+    <div id="auth-section" class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-brand-logo"><i class="fa-solid fa-shield-halved"></i></div>
+                <h1>Vision Desk <span>AI</span></h1>
+                <p id="login-subtext">Enterprise Workplace Safety & Visual Intelligence</p>
+                <p id="signup-subtext" style="display:none;">Register enterprise credentials</p>
+            </div>
+
+            <div class="tab-box">
+                <button class="tab-btn active" id="login-tab-btn" onclick="switchTab('login')">Sign In</button>
+                <button class="tab-btn" id="signup-tab-btn" onclick="switchTab('signup')">Sign Up</button>
+            </div>
+
+            <form id="login-form" class="auth-form active">
+                <div class="input-group">
+                    <label>Enterprise Email</label>
+                    <input type="email" id="login-email" placeholder="officer@enterprise.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Sign In to Safety Suite</button>
+            </form>
+
+            <form id="signup-form" class="auth-form">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Chief Safety Officer" required>
+                </div>
+                <div class="input-group">
+                    <label>Enterprise Email</label>
+                    <input type="email" id="signup-email" placeholder="officer@enterprise.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" placeholder="••••••••" required>
+                </div>
+                <div class="input-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="signup-confirm-password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= ENTERPRISE APPLICATION ================= -->
+    <div id="upload-section" class="app-layout" style="display: none;">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                <div>
+                    <h2>Vision Desk <span>AI</span></h2>
+                    <span class="sub-tag">Compliance OS</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <button class="nav-item active" onclick="switchView('dashboard-view', this)">
+                    <i class="fa-solid fa-chart-pie"></i> Safety Dashboard (M6)
+                </button>
+                <button class="nav-item" onclick="switchView('workspace-view', this)">
+                    <i class="fa-solid fa-camera"></i> Live Vision & CCTV (M1 & M2)
+                </button>
+                <button class="nav-item" onclick="switchView('correlation-view', this)">
+                    <i class="fa-solid fa-network-wired"></i> Correlation & QA (M3 & M4)
+                </button>
+                <button class="nav-item" onclick="switchView('investigation-view', this)">
+                    <i class="fa-solid fa-robot"></i> Agentic Investigation (M5)
+                </button>
+            </nav>
+
+            <!-- LIVE SYSTEM TELEMETRY -->
+            <div class="telemetry-widget">
+                <div class="telemetry-header">
+                    <span class="pulse-dot"></span> <strong>SYSTEM ONLINE</strong>
+                </div>
+                <div class="telemetry-row">
+                    <span>Vision Engine:</span>
+                    <strong>YOLOv8 PPE</strong>
+                </div>
+                <div class="telemetry-row">
+                    <span>Vector Store:</span>
+                    <strong>ChromaDB Active</strong>
+                </div>
+                <div class="telemetry-row">
+                    <span>Audio Siren:</span>
+                    <strong id="sirenStatusText" style="color:var(--success);">ENABLED</strong>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-chip">
+                    <div class="avatar"><i class="fa-solid fa-user-shield"></i></div>
+                    <div class="user-meta">
+                        <strong id="user-display-name">Safety Officer</strong>
+                        <span>Active Session</span>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()"><i
+                        class="fa-solid fa-arrow-right-from-bracket"></i></button>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEW CONTAINER -->
+        <main class="main-content">
+
+            <!-- ================= VIEW 1: MODULE 6 DASHBOARD ================= -->
+            <section id="dashboard-view" class="view-panel active">
+                <header class="panel-topbar">
+                    <div>
+                        <div class="view-tag"><i class="fa-solid fa-layer-group"></i> MODULE 6 EXECUTIVE ANALYTICS</div>
+                        <h1>Workplace Safety & Incident Telemetry</h1>
+                        <p>Real-time Workplace Compliance, KPI Analytics & Export Suite</p>
+                    </div>
+                    <div class="topbar-actions">
+                        <button class="btn btn-secondary" onclick="loadDashboardMetrics()"><i
+                                class="fa-solid fa-rotate"></i> Refresh</button>
+                        <a href="/api/dashboard/export/csv" class="btn btn-primary"><i
+                                class="fa-solid fa-file-arrow-down"></i> Export Audit CSV</a>
+                    </div>
+                </header>
+
+                <!-- KPI CARDS -->
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-icon icon-blue"><i class="fa-solid fa-shield-virus"></i></div>
+                        <div>
+                            <span class="kpi-label">Safety Compliance Rate</span>
+                            <h2 id="kpi-compliance">94.2%</h2>
+                            <span class="kpi-trend trend-positive"><i class="fa-solid fa-arrow-up"></i> +2.4% vs last
+                                week</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon icon-red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <div>
+                            <span class="kpi-label">Critical Hazard Alarms</span>
+                            <h2 id="kpi-critical">2</h2>
+                            <span class="kpi-badge badge-critical"><i class="fa-solid fa-bell"></i> Immediate
+                                Response</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon icon-amber"><i class="fa-solid fa-clipboard-list"></i></div>
+                        <div>
+                            <span class="kpi-label">Total Recorded Violations</span>
+                            <h2 id="kpi-total">7</h2>
+                            <span class="kpi-subtext"><span id="kpi-open"
+                                    style="color:#ef4444;font-weight:700;">3</span> Open / <span id="kpi-resolved"
+                                    style="color:#10b981;font-weight:700;">4</span> Resolved</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon icon-green"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                        <div>
+                            <span class="kpi-label">Corrective Action Resolution</span>
+                            <h2 id="kpi-resolution">85.7%</h2>
+                            <span class="kpi-subtext">Avg 2.4h Turnaround</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHARTS + RISK MATRIX ROW -->
+                <div class="dashboard-charts-grid">
+                    <div class="card chart-card">
+                        <div class="card-header space-between">
+                            <h3><i class="fa-solid fa-chart-column"></i> Violations by Type Distribution</h3>
+                            <span class="badge badge-subtle">Aggregated</span>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="violationsTypeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card chart-card">
+                        <div class="card-header space-between">
+                            <h3><i class="fa-solid fa-building"></i> Department-wise Violations</h3>
+                            <span class="badge badge-subtle">Analytics</span>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="departmentChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- RISK HEATMAP WIDGET -->
+                    <div class="card">
+                        <div class="card-header space-between">
+                            <h3><i class="fa-solid fa-fire-flame-curved"></i> High-Risk Operational Zones</h3>
+                            <span class="badge badge-critical">Live Heatmap</span>
+                        </div>
+                        <div class="risk-matrix-list">
+                            <div class="risk-row">
+                                <div class="risk-meta"><strong>Scaffold Sector 4</strong><span>Fall & Harness
+                                        Hazard</span></div>
+                                <div class="risk-bar-wrapper">
+                                    <div class="risk-bar bar-critical" style="width: 92%;"></div>
+                                </div>
+                                <span class="risk-score" style="color:#ef4444;">92% High Risk</span>
+                            </div>
+                            <div class="risk-row">
+                                <div class="risk-meta"><strong>Heavy Turbine Room</strong><span>Restricted
+                                        Perimeter</span></div>
+                                <div class="risk-bar-wrapper">
+                                    <div class="risk-bar bar-high" style="width: 84%;"></div>
+                                </div>
+                                <span class="risk-score" style="color:#f59e0b;">84% Risk</span>
+                            </div>
+                            <div class="risk-row">
+                                <div class="risk-meta"><strong>Assembly Conveyor 1</strong><span>PPE Helmet
+                                        Compliance</span></div>
+                                <div class="risk-bar-wrapper">
+                                    <div class="risk-bar bar-medium" style="width: 68%;"></div>
+                                </div>
+                                <span class="risk-score" style="color:#6366f1;">68% Risk</span>
+                            </div>
+                            <div class="risk-row">
+                                <div class="risk-meta"><strong>Loading Depot Bay 2</strong><span>Reflective Vest
+                                        Area</span></div>
+                                <div class="risk-bar-wrapper">
+                                    <div class="risk-bar bar-low" style="width: 32%;"></div>
+                                </div>
+                                <span class="risk-score" style="color:#10b981;">32% Low Risk</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIOLATIONS TABLE -->
+                <div class="card mt-24">
+                    <div class="card-header space-between">
+                        <div>
+                            <h3><i class="fa-solid fa-list-check"></i> Real-time Incident Audit Log</h3>
+                            <p class="card-subtext">Click any row to inspect complete evidence and details</p>
+                        </div>
+                        <div class="filter-controls">
+                            <select id="filterSeverity" onchange="loadViolationsTable()">
+                                <option value="All">All Severities</option>
+                                <option value="Critical">Critical</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                            <select id="filterStatus" onchange="loadViolationsTable()">
+                                <option value="All">All Statuses</option>
+                                <option value="Open">Open</option>
+                                <option value="Investigating">Investigating</option>
+                                <option value="Resolved">Resolved</option>
+                            </select>
+                            <select id="filterDepartment" onchange="loadViolationsTable()">
+                                <option value="All">All Departments</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                                <option value="Logistics">Logistics</option>
+                                <option value="Maintenance">Maintenance</option>
+                                <option value="Fabrication">Fabrication</option>
+                                <option value="Construction">Construction</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Timestamp</th>
+                                    <th>Violation Type</th>
+                                    <th>Location</th>
+                                    <th>Department</th>
+                                    <th>Severity</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="violationsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= VIEW 2: WORKSPACE (M1 & M2) ================= -->
+            <section id="workspace-view" class="view-panel">
+                <header class="panel-topbar">
+                    <div>
+                        <div class="view-tag"><i class="fa-solid fa-video"></i> MODULE 1 & MODULE 2 VISION ENGINE</div>
+                        <h1>Live Vision & Knowledge Processing</h1>
+                        <p>Dual-inference YOLOv8 PPE detection with sentence-aware document RAG</p>
+                    </div>
+                    <div class="topbar-actions">
+                        <button class="btn btn-secondary" onclick="toggleWebcam()"><i class="fa-solid fa-video"></i>
+                            Toggle Live Camera</button>
+                        <button class="btn btn-secondary" onclick="toggleAudioAlarm()"><i
+                                class="fa-solid fa-volume-high"></i> Toggle Alarm Siren</button>
+                    </div>
+                </header>
+
+                <div class="grid-2col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-upload"></i> Media & Policy Document Dropzone</h3>
+                        </div>
+                        <div class="upload-grid">
+                            <div class="dropzone">
+                                <i class="fa-regular fa-image"></i>
+                                <strong>Upload Image</strong>
+                                <span>PNG, JPG, WEBP</span>
+                                <input type="file" id="imageInput" accept="image/*"
+                                    onchange="handleFileSelect('image')">
+                            </div>
+                            <div class="dropzone">
+                                <i class="fa-solid fa-film"></i>
+                                <strong>Upload Video</strong>
+                                <span>MP4, WebM, MOV</span>
+                                <input type="file" id="videoInput" accept="video/*"
+                                    onchange="handleFileSelect('video')">
+                            </div>
+                            <div class="dropzone">
+                                <i class="fa-regular fa-file-lines"></i>
+                                <strong>Upload Policy Document</strong>
+                                <span>PDF, DOCX, TXT</span>
+                                <input type="file" id="docInput" accept=".pdf,.docx,.txt"
+                                    onchange="handleFileSelect('document')">
+                            </div>
+                        </div>
+
+                        <div class="file-card mt-16" id="fileCard">
+                            <div class="file-details">
+                                <span class="file-name" id="fileName">No file chosen</span>
+                                <span class="file-meta" id="fileMeta">Select an image, video, or document</span>
+                            </div>
+                            <button class="clear-btn" id="clearBtn" onclick="clearSelectedFile()"
+                                style="display:none;">✕</button>
+                        </div>
+
+                        <div class="button-group mt-16">
+                            <button class="btn btn-secondary" onclick="renderPreview()">Preview Selected</button>
+                            <button class="btn btn-primary" onclick="analyzeMedia()"><i class="fa-solid fa-bolt"></i>
+                                Run Inference & Index</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header space-between">
+                            <h3><i class="fa-solid fa-display"></i> Visual Stage & Detection Telemetry</h3>
+                            <span class="badge" id="previewBadge">Awaiting Feed</span>
+                        </div>
+
+                        <!-- LIVE VIDEO / PREVIEW CANVAS -->
+                        <div class="preview-stage" id="previewStage">
+                            <div class="placeholder-content">
+                                <i class="fa-solid fa-eye-slash fa-2x"></i>
+                                <h3>No Media Active</h3>
+                                <p>Upload an image/video or click "Toggle Live Camera".</p>
+                            </div>
+                            <video id="webcamFeed" autoplay playsinline muted
+                                style="display:none;width:100%;border-radius:10px;"></video>
+                        </div>
+
+                        <div id="detectionDetails" class="detections-chip-list mt-16"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= VIEW 3: CORRELATION & QA (M3 & M4) ================= -->
+            <section id="correlation-view" class="view-panel">
+                <header class="panel-topbar">
+                    <div>
+                        <div class="view-tag"><i class="fa-solid fa-brain"></i> MODULE 3 & MODULE 4 MULTIMODAL
+                            INTELLIGENCE</div>
+                        <h1>Visual Policy Correlation & Safety RAG</h1>
+                        <p>Cross-correlating physical CCTV detections against written safety SOPs</p>
+                    </div>
+                </header>
+
+                <!-- PRESET SCENARIOS STRIP -->
+                <div class="presets-strip card mb-20">
+                    <div class="presets-label"><i class="fa-solid fa-wand-magic-sparkles"></i> <strong>1-Click Demo
+                            Scenarios:</strong></div>
+                    <div class="preset-buttons">
+                        <button class="preset-chip" onclick="loadScenario('machinery')">Scenario A: Conveyor Line PPE
+                            Breach</button>
+                        <button class="preset-chip" onclick="loadScenario('scaffold')">Scenario B: Scaffold Fall
+                            Protection</button>
+                        <button class="preset-chip" onclick="loadScenario('fire')">Scenario C: Blocked Emergency
+                            Exit</button>
+                    </div>
+                </div>
+
+                <div class="grid-2col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-link"></i> Module 3: Multimodal Correlation Engine</h3>
+                        </div>
+
+                        <label class="form-label">Observed Incident Detection</label>
+                        <textarea id="correlationDetection" class="form-textarea"
+                            rows="3">Worker detected operating near heavy conveyor belt without protective helmet or high-visibility vest.</textarea>
+
+                        <label class="form-label">Applicable Safety Policy Clause</label>
+                        <textarea id="correlationRules" class="form-textarea"
+                            rows="3">Section 4.1: Mandatory Hard Hats & High-Vis Vests must be worn within 5 meters of active conveyor and fabrication lines.</textarea>
+
+                        <button class="btn btn-primary mt-16" onclick="runCorrelation()"><i
+                                class="fa-solid fa-arrows-split-up-and-left"></i> Run Correlation Engine</button>
+
+                        <pre id="correlationResult" class="result-box">// Correlation audit will appear here...</pre>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-comments"></i> Module 4: Policy RAG Safety QA</h3>
+                        </div>
+
+                        <label class="form-label">Ask Policy Compliance Assistant</label>
+                        <textarea id="safetyQuestion" class="form-textarea" rows="4"
+                            placeholder="What are the mandatory fall protection and harness guidelines under Section 2.0?"></textarea>
+
+                        <button class="btn btn-primary mt-16" onclick="askSafetyQuestion()"><i
+                                class="fa-solid fa-magnifying-glass"></i> Search Safety Knowledge Base</button>
+
+                        <pre id="qaResult" class="result-box">// RAG grounded response with policy citations...</pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= VIEW 4: AGENTIC INVESTIGATION (M5) ================= -->
+            <section id="investigation-view" class="view-panel">
+                <header class="panel-topbar">
+                    <div>
+                        <div class="view-tag"><i class="fa-solid fa-network-wired"></i> MODULE 5 MULTI-AGENT ROOT CAUSE
+                            ANALYSIS</div>
+                        <h1>Autonomous Workplace Safety Investigation</h1>
+                        <p>LangGraph multi-agent orchestration for root cause discovery and audit reporting</p>
+                    </div>
+                </header>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-terminal"></i> Incident Investigation Command</h3>
+                    </div>
+
+                    <textarea id="investigationQuery" class="form-textarea"
+                        rows="3">A contractor sustained a fall near Scaffold Sector 4. Investigate violation history, tethering rules, and generate an incident compliance audit report.</textarea>
+
+                    <button class="btn btn-primary mt-16" onclick="runInvestigation()"><i class="fa-solid fa-play"></i>
+                        Launch Multi-Agent Workflow</button>
+
+                    <!-- LIVE AGENT GRAPH VISUALIZER -->
+                    <div class="agent-graph-container mt-24" id="agentGraph">
+                        <h4>Multi-Agent Orchestration Pipeline</h4>
+                        <div class="agent-nodes-grid">
+                            <div class="agent-node" id="node-query"><i class="fa-solid fa-magnifying-glass"></i><span>1.
+                                    Query Analysis</span></div>
+                            <div class="agent-node" id="node-doc"><i class="fa-solid fa-book-open"></i><span>2. Document
+                                    RAG</span></div>
+                            <div class="agent-node" id="node-vision"><i class="fa-solid fa-eye"></i><span>3. Visual
+                                    Analysis</span></div>
+                            <div class="agent-node" id="node-val"><i class="fa-solid fa-check-double"></i><span>4.
+                                    Evidence Validation</span></div>
+                            <div class="agent-node" id="node-reason"><i class="fa-solid fa-brain"></i><span>5. Reasoning
+                                    & Findings</span></div>
+                            <div class="agent-node" id="node-report"><i class="fa-solid fa-file-signature"></i><span>6.
+                                    Report Synthesis</span></div>
+                        </div>
+                    </div>
+
+                    <div id="investigationStatus" class="mt-16"></div>
+
+                    <div id="investigationReport" class="investigation-report mt-16" style="display: none;">
+                        <div class="card-header space-between">
+                            <h3><i class="fa-solid fa-file-lines"></i> Synthesized Incident Investigation Report</h3>
+                            <span class="badge badge-critical" id="reviewBadge">Pending Human Sign-off</span>
+                        </div>
+                        <pre id="reportContent" class="report-box"></pre>
+
+                        <div class="human-review-actions mt-16">
+                            <button class="btn btn-success" onclick="approveInvestigation()"><i
+                                    class="fa-solid fa-check"></i> Sign-off & Approve Audit Report</button>
+                            <button class="btn btn-secondary" onclick="rejectInvestigation()"><i
+                                    class="fa-solid fa-xmark"></i> Request Agent Re-Analysis</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ================= INCIDENT INSPECTION MODAL ================= -->
+    <div id="incidentModal" class="modal-backdrop" style="display:none;" onclick="closeModal(event)">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h3 id="modalTitle">Incident #104 Inspection</h3>
+                    <span id="modalMeta" class="modal-sub">CAM-01 • Assembly Zone</span>
+                </div>
+                <button class="close-btn" onclick="closeIncidentModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-kpi-row">
+                    <div><span>Severity:</span> <strong id="modalSeverity"
+                            class="badge badge-critical">Critical</strong></div>
+                    <div><span>Current Status:</span> <strong id="modalStatus" class="badge badge-open">Open</strong>
+                    </div>
+                    <div><span>Recorded At:</span> <strong id="modalTime">2025-08-28 10:15</strong></div>
+                </div>
+                <div class="mt-16">
+                    <label class="form-label">Evidence Snapshot Reference:</label>
+                    <div id="modalEvidence" class="evidence-box">CAM-01 Detection Stream</div>
+                </div>
+                <div class="mt-16">
+                    <label class="form-label">Immediate Corrective Protocol:</label>
+                    <p id="modalAction" class="modal-text">Worker halted. Issue PPE compliance warning and re-certify
+                        hardhat gear.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" id="modalResolveBtn" onclick="resolveCurrentModalViolation()"><i
+                        class="fa-solid fa-check"></i> Mark as Resolved</button>
+                <button class="btn btn-secondary" onclick="closeIncidentModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

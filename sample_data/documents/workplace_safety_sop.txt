@@ -1,0 +1,19 @@
+================================================================================
+GLOBAL INDUSTRIAL WORKPLACE COMPLIANCE & SAFETY STANDARD (SOP-2025)
+================================================================================
+
+SECTION 1.0: PERSONAL PROTECTIVE EQUIPMENT (PPE)
+1.1 Hard Hat Protocol: All personnel, engineers, and visitors in fabrication, crane, or assembly areas must wear an ANSI Z89.1 certified Type I/II hard hat at all times.
+1.2 High-Visibility Vests: Class 2 reflective high-visibility safety vests are mandatory in heavy loading bays, logistics sectors, and transit routes.
+1.3 Eye & Hand Safety: Impact-resistant goggles and cut-resistant gloves must be worn when operating machine tools or handling raw metal.
+
+SECTION 2.0: WORKING AT HEIGHTS & FALL PROTECTION
+2.1 Elevated Work Protocol: Any work performed above 2.0 meters requires an OSHA-compliant full-body safety harness tethered to an overhead anchor.
+2.2 Ladder Safety: Ladders must be anchored on level, non-slip surfaces with a 4:1 incline ratio. Maintain 3 points of contact at all times.
+
+SECTION 3.0: MACHINERY PERIMETER & LOCKOUT/TAGOUT
+3.1 Active Machinery Exclusion Zone: A 5-meter clearance perimeter must be maintained around active conveyor belts and hydraulic presses.
+3.2 Defective Equipment: Faulty equipment must be locked out, tagged out, and reported immediately to the site supervisor.
+
+SECTION 4.0: EMERGENCY EXITS & ROUTES
+4.1 Unobstructed Passageways: All emergency fire exits and escape stairwells must remain 100% free of pallets, boxes, or stored materials.
